@@ -1,24 +1,6 @@
 package com.programmers.codingtest.level1;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
-
-class Metal implements Comparable<Metal> {
-    int weight;
-    int pricePerWeight;
-
-    public Metal(int weight, int pricePerWeight) {
-        this.weight = weight;
-        this.pricePerWeight = pricePerWeight;
-    }
-
-    @Override
-    public int compareTo(Metal o) {
-        return Integer.compare(o.pricePerWeight, this.pricePerWeight);
-    }
-}
 
 public class exam4 {
     public static void main(String[] args) {
@@ -27,24 +9,26 @@ public class exam4 {
         int W = scanner.nextInt();
         int N = scanner.nextInt();
 
-        List<Metal> metals = new ArrayList<>();
+        int[] weights = new int[N];
+        int[] prices = new int[N];
 
         for (int i = 0; i < N; i++) {
-            int weight = scanner.nextInt();
-            int price = scanner.nextInt();
-            metals.add(new Metal(weight, price));
+            weights[i] = scanner.nextInt();
+            prices[i] = scanner.nextInt();
         }
 
-        Collections.sort(metals);
+        int[][] dp = new int[N + 1][W + 1];
 
-        int totalPrice = 0;
-        for (Metal metal : metals) {
-            int weight = Math.min(W, metal.weight);
-            totalPrice += weight * metal.pricePerWeight;
-            W -= weight;
-            if (W == 0) break;
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= W; j++) {
+                if (weights[i - 1] <= j) {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weights[i - 1]] + prices[i - 1]);
+                } else {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
         }
 
-        System.out.println(totalPrice);
+        System.out.println(dp[N][W]);
     }
 }
